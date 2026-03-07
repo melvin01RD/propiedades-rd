@@ -67,6 +67,19 @@ def create_app() -> FastAPI:
     app.include_router(catalog_router)
     app.include_router(property_router)
 
+    @app.get("/", tags=["health"])
+    async def root():
+        return {
+            "api": "propiedades-rd API",
+            "version": "0.1.0",
+            "description": "Plataforma inmobiliaria para República Dominicana",
+            "links": {
+                "docs":   "/docs",
+                "redoc":  "/redoc",
+                "health": "/health",
+            },
+        }
+
     @app.get("/health", tags=["health"])
     async def health_check():
         return {"status": "ok", "environment": settings.environment}
