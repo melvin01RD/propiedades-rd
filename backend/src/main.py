@@ -4,17 +4,16 @@ from contextlib import asynccontextmanager
 
 from src.core.config import get_settings
 from src.core.database import engine
+from src.api.routes.auth_router import router as auth_router
 
 settings = get_settings()
 
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    # Startup: verificar conexión a DB
     async with engine.begin() as conn:
         await conn.run_sync(lambda c: None)
     yield
-    # Shutdown: cerrar conexión
     await engine.dispose()
 
 
@@ -35,6 +34,8 @@ def create_app() -> FastAPI:
         allow_methods=["*"],
         allow_headers=["*"],
     )
+
+    app.include_router(auth_router)
 
     @app.get("/health", tags=["health"])
     async def health_check():
