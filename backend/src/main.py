@@ -38,12 +38,30 @@ async def lifespan(app: FastAPI):
 
 def create_app() -> FastAPI:
     app = FastAPI(
-        title="propiedades-rd API",
-        description="Plataforma inmobiliaria para República Dominicana",
-        version="0.1.0",
+        title="Propiedades RD API",
+        description="API REST para plataforma inmobiliaria de República Dominicana",
+        version="0.2.0",
         docs_url="/docs" if settings.debug else None,
         redoc_url="/redoc" if settings.debug else None,
         lifespan=lifespan,
+        openapi_tags=[
+            {
+                "name": "Autenticación",
+                "description": "Registro, login y perfil del usuario",
+            },
+            {
+                "name": "Catálogos",
+                "description": "Provincias, sectores y amenidades de RD",
+            },
+            {
+                "name": "Propiedades",
+                "description": "Gestión completa de propiedades inmobiliarias",
+            },
+            {
+                "name": "Estado del servidor",
+                "description": "Monitoreo y salud de la API",
+            },
+        ],
     )
 
     # Middlewares (orden importa — el último agregado es el primero en ejecutarse)
@@ -67,7 +85,7 @@ def create_app() -> FastAPI:
     app.include_router(catalog_router)
     app.include_router(property_router)
 
-    @app.get("/", tags=["health"])
+    @app.get("/", tags=["Estado del servidor"])
     async def root():
         return {
             "api": "propiedades-rd API",
@@ -80,7 +98,7 @@ def create_app() -> FastAPI:
             },
         }
 
-    @app.get("/health", tags=["health"])
+    @app.get("/health", tags=["Estado del servidor"])
     async def health_check():
         return {"status": "ok", "environment": settings.environment}
 
