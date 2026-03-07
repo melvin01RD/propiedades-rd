@@ -9,7 +9,6 @@ Schemas de propiedades:
 
 import uuid
 from decimal import Decimal
-from typing import Annotated
 from pydantic import BaseModel, Field, field_validator
 
 from src.persistence.models.property import (

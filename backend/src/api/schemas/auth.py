@@ -14,6 +14,13 @@ class RegisterRequest(BaseModel):
             raise ValueError("Password must be at least 8 characters")
         return v
 
+    @field_validator("role")
+    @classmethod
+    def role_must_not_be_admin(cls, v: UserRole) -> UserRole:
+        if v == UserRole.admin:
+            raise ValueError("No puedes registrarte como administrador")
+        return v
+
 
 class LoginRequest(BaseModel):
     email: EmailStr

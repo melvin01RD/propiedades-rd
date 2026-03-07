@@ -21,7 +21,7 @@ from sqlalchemy.orm import selectinload
 
 from src.persistence.models import (
     Property, PropertyStatus, PropertyType,
-    OperationType, Province, Sector, Amenity
+    OperationType, Amenity
 )
 
 
@@ -152,6 +152,7 @@ class PropertyRepository:
         stmt = (
             select(Property)
             .where(Property.agent_id == agent_id)
+            .where(Property.status == PropertyStatus.active)
             .options(*self._EAGER)
             .order_by(Property.created_at.desc())
         )
@@ -162,6 +163,7 @@ class PropertyRepository:
         stmt = (
             select(Property)
             .where(Property.owner_id == owner_id)
+            .where(Property.status == PropertyStatus.active)
             .options(*self._EAGER)
             .order_by(Property.created_at.desc())
         )
@@ -293,7 +295,12 @@ class PropertyRepository:
 
     async def _load_amenities(self, db: AsyncSession, ids: list[int]) -> list[Amenity]:
         result = await db.execute(select(Amenity).where(Amenity.id.in_(ids)))
-        return list(result.scalars().all())
+        amenities = list(result.scalars().all())
+        if len(amenities) != len(ids):
+            found = {a.id for a in amenities}
+            missing = [i for i in ids if i not in found]
+            raise ValueError(f"Amenidades no encontradas: {missing}")
+        return amenities
 
 
 # Instancia lista para importar en servicios y endpoints

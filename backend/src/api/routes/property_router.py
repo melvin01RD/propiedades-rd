@@ -11,7 +11,7 @@ Endpoints:
 """
 
 import uuid
-from fastapi import APIRouter, Depends, HTTPException, Query, status
+from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.core.dependencies import get_db, get_current_user
@@ -49,10 +49,10 @@ def _assert_owner(prop, current_user: User):
     if current_user.role == UserRole.admin:
         return
     if current_user.role == UserRole.agent:
-        if not hasattr(current_user, "agent") or prop.agent_id != current_user.agent.id:
+        if current_user.agent is None or prop.agent_id != current_user.agent.id:
             raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Sin acceso")
     elif current_user.role == UserRole.owner:
-        if not hasattr(current_user, "owner") or prop.owner_id != current_user.owner.id:
+        if current_user.owner is None or prop.owner_id != current_user.owner.id:
             raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Sin acceso")
 
 
@@ -111,11 +111,11 @@ async def my_properties(
     current_user: User = Depends(get_current_user),
 ):
     if current_user.role == UserRole.agent:
-        if not hasattr(current_user, "agent"):
+        if current_user.agent is None:
             return []
         props = await property_repository.get_by_agent(db, current_user.agent.id)
     elif current_user.role == UserRole.owner:
-        if not hasattr(current_user, "owner"):
+        if current_user.owner is None:
             return []
         props = await property_repository.get_by_owner(db, current_user.owner.id)
     else:
@@ -161,23 +161,21 @@ async def create_property(
 
     # Asignar publicador según el rol
     if current_user.role == UserRole.agent:
-        if not hasattr(current_user, "agent"):
+        if current_user.agent is None:
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
                 detail="El usuario no tiene perfil de agente",
             )
         payload["agent_id"] = current_user.agent.id
     elif current_user.role == UserRole.owner:
-        if not hasattr(current_user, "owner"):
+        if current_user.owner is None:
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
                 detail="El usuario no tiene perfil de propietario",
             )
         payload["owner_id"] = current_user.owner.id
 
-    async with db.begin():
-        prop = await property_repository.create(db, payload)
-
+    prop = await property_repository.create(db, payload)
     return await _get_property_or_404(prop.id, db)
 
 
@@ -200,9 +198,7 @@ async def update_property(
     # Solo enviar campos que el usuario realmente mandó
     payload = data.model_dump(exclude_unset=True)
 
-    async with db.begin():
-        updated = await property_repository.update(db, property_id, payload)
-
+    updated = await property_repository.update(db, property_id, payload)
     return await _get_property_or_404(updated.id, db)
 
 
@@ -221,5 +217,4 @@ async def delete_property(
     prop = await _get_property_or_404(property_id, db)
     _assert_owner(prop, current_user)
 
-    async with db.begin():
-        await property_repository.soft_delete(db, property_id)
+    await property_repository.soft_delete(db, property_id)
