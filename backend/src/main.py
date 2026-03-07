@@ -3,15 +3,19 @@ from fastapi.middleware.cors import CORSMiddleware
 from contextlib import asynccontextmanager
 
 from src.core.config import get_settings
+from src.core.database import engine
 
 settings = get_settings()
 
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    # Startup
+    # Startup: verificar conexión a DB
+    async with engine.begin() as conn:
+        await conn.run_sync(lambda c: None)
     yield
-    # Shutdown
+    # Shutdown: cerrar conexión
+    await engine.dispose()
 
 
 def create_app() -> FastAPI:
