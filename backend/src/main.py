@@ -10,6 +10,8 @@ from src.core.database import engine
 from src.api.routes.auth_router import router as auth_router
 from src.api.routes.catalog_router import router as catalog_router
 from src.api.routes.property_router import router as property_router
+from src.api.routes.favorite_router import router as favorite_router
+from src.api.routes.alert_router import router as alert_router
 from src.api.middleware import (
     LoggingMiddleware,
     RateLimitMiddleware,
@@ -58,6 +60,14 @@ def create_app() -> FastAPI:
                 "description": "Gestión completa de propiedades inmobiliarias",
             },
             {
+                "name": "Favoritos",
+                "description": "Gestión de propiedades guardadas por el usuario",
+            },
+            {
+                "name": "Alertas",
+                "description": "Alertas de búsqueda personalizadas por filtros",
+            },
+            {
                 "name": "Estado del servidor",
                 "description": "Monitoreo y salud de la API",
             },
@@ -84,6 +94,8 @@ def create_app() -> FastAPI:
     app.include_router(auth_router)
     app.include_router(catalog_router)
     app.include_router(property_router)
+    app.include_router(favorite_router)
+    app.include_router(alert_router)
 
     @app.get("/", tags=["Estado del servidor"])
     async def root():
