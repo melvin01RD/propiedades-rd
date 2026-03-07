@@ -1,7 +1,7 @@
 import uuid
 from datetime import datetime, timezone
 from sqlalchemy import String, Text, DateTime, ForeignKey
-from sqlalchemy.orm import Mapped, mapped_column, relationship
+from sqlalchemy.orm import Mapped, mapped_column, relationship, backref as sa_backref
 from sqlalchemy.dialects.postgresql import UUID
 
 from src.core.database import Base
@@ -22,5 +22,5 @@ class Agent(Base):
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc), nullable=False)
     updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc), onupdate=lambda: datetime.now(timezone.utc), nullable=False)
 
-    user: Mapped["User"] = relationship("User", backref="agent")
+    user: Mapped["User"] = relationship("User", backref=sa_backref("agent", uselist=False))
     properties: Mapped[list["Property"]] = relationship("Property", back_populates="agent")

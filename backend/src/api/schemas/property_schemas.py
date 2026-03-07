@@ -192,7 +192,7 @@ class PropertyFilters(BaseModel):
     parking_spots_min: int | None            = Field(None, ge=0)
     area_min:          Decimal | None        = None
     area_max:          Decimal | None        = None
-    amenity_slugs:     list[str]             = Field(default_factory=list)
+    amenity_slugs:     list[str]             = Field(default=[])
     is_featured:       bool | None           = None
     page:              int                   = Field(1, ge=1)
     limit:             int                   = Field(20, ge=1, le=100)
