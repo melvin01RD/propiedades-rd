@@ -67,7 +67,7 @@ class Property(Base):
     floors: Mapped[int | None] = mapped_column(SmallInteger)
     year_built: Mapped[int | None] = mapped_column(SmallInteger)
 
-    # Ubicación — province/sector como FK a catálogos
+    # Ubicación — ahora con FK a catálogos (Opción B)
     country: Mapped[str] = mapped_column(String(100), default="República Dominicana", nullable=False)
     province_id: Mapped[int] = mapped_column(ForeignKey("provinces.id"), nullable=False)
     sector_id: Mapped[int | None] = mapped_column(ForeignKey("sectors.id"))
