@@ -9,6 +9,7 @@ from src.core.config import get_settings
 from src.core.database import engine
 from src.api.routes.auth_router import router as auth_router
 from src.api.routes.catalog_router import router as catalog_router
+from src.api.routes.property_router import router as property_router
 from src.api.middleware import (
     LoggingMiddleware,
     RateLimitMiddleware,
@@ -64,6 +65,7 @@ def create_app() -> FastAPI:
     # Routers
     app.include_router(auth_router)
     app.include_router(catalog_router)
+    app.include_router(property_router)
 
     @app.get("/health", tags=["health"])
     async def health_check():
