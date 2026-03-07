@@ -7,7 +7,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.core.database import AsyncSessionFactory
 from src.core.security import decode_token
-from src.persistence.repositories.user_repository import UserRepository
+from src.persistence.repositories.user_repository import user_repository
 from src.persistence.models.user import User
 
 bearer_scheme = HTTPBearer()
@@ -34,14 +34,15 @@ async def get_current_user(
     )
     try:
         payload = decode_token(credentials.credentials)
+        if payload.get("type") != "access":
+            raise credentials_exception
         user_id: str = payload.get("sub")
         if user_id is None:
             raise credentials_exception
     except JWTError:
         raise credentials_exception
 
-    repo = UserRepository(db)
-    user = await repo.get_by_id(uuid.UUID(user_id))
+    user = await user_repository.get_by_id(db, uuid.UUID(user_id))
     if user is None or not user.is_active:
         raise credentials_exception
     return user

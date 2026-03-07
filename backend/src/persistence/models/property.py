@@ -1,5 +1,5 @@
 import uuid
-from datetime import datetime
+from datetime import datetime, timezone
 import enum
 from sqlalchemy import String, Text, Numeric, SmallInteger, Boolean, DateTime, ForeignKey, Enum as SAEnum, CheckConstraint
 from sqlalchemy.orm import Mapped, mapped_column, relationship
@@ -80,8 +80,8 @@ class Property(Base):
     is_featured: Mapped[bool] = mapped_column(Boolean, default=False, nullable=False)
 
     # Timestamps
-    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=datetime.utcnow, nullable=False)
-    updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=datetime.utcnow, onupdate=datetime.utcnow, nullable=False)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc), nullable=False)
+    updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc), onupdate=lambda: datetime.now(timezone.utc), nullable=False)
 
     # Relaciones
     agent: Mapped["Agent"] = relationship("Agent", back_populates="properties")

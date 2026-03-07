@@ -122,9 +122,8 @@ async def seed_properties(session: AsyncSession, agents: dict, owners: dict):
             "bathrooms": 2,
             "area_m2": 145.0,
             "address": "Calle El Recodo 45, Piantini",
-            "province": "Distrito Nacional",
+            "province_id": 1,   # Distrito Nacional
             "city": "Santo Domingo",
-            "sector": "Piantini",
             "status": PropertyStatus.active,
             "agent_id": agents["carlos"].id,
         },
@@ -139,9 +138,8 @@ async def seed_properties(session: AsyncSession, agents: dict, owners: dict):
             "bathrooms": 4,
             "area_m2": 420.0,
             "address": "Casa de Campo, Bloque 12",
-            "province": "La Romana",
+            "province_id": 14,  # La Romana
             "city": "La Romana",
-            "sector": "Casa de Campo",
             "status": PropertyStatus.active,
             "owner_id": owners["maria"].id,
         },
@@ -156,9 +154,8 @@ async def seed_properties(session: AsyncSession, agents: dict, owners: dict):
             "bathrooms": 1,
             "area_m2": 80.0,
             "address": "Av. Tiradentes 32, Naco",
-            "province": "Distrito Nacional",
+            "province_id": 1,   # Distrito Nacional
             "city": "Santo Domingo",
-            "sector": "Naco",
             "status": PropertyStatus.active,
             "agent_id": agents["carlos"].id,
         },
@@ -173,9 +170,8 @@ async def seed_properties(session: AsyncSession, agents: dict, owners: dict):
             "bathrooms": 3,
             "area_m2": 280.0,
             "address": "Calle Los Prados 18",
-            "province": "Distrito Nacional",
+            "province_id": 1,   # Distrito Nacional
             "city": "Santo Domingo",
-            "sector": "Los Prados",
             "status": PropertyStatus.active,
             "owner_id": owners["maria"].id,
         },
