@@ -1,0 +1,10 @@
+{
+  "project": "propiedades-rd",
+  "language": "es",
+  "code_language": "en",
+  "preferences": {
+    "incremental_delivery": true,
+    "document_before_implement": true,
+    "test_coverage": true
+  }
+}
