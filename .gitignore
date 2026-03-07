@@ -40,3 +40,4 @@ secrets/
 # Logs
 *.log
 logs/
+.env.testing
