@@ -66,14 +66,16 @@ class TestLogin:
         """Credenciales correctas retornan token."""
         with patch("src.services.auth_service.user_repository") as mock_repo, \
              patch("src.services.auth_service.verify_password", return_value=True), \
-             patch("src.services.auth_service.create_access_token", return_value="token123"):
+             patch("src.services.auth_service.create_access_token", return_value="token123"), \
+             patch("src.services.auth_service.create_refresh_token", return_value="refresh123"):
 
             mock_repo.get_by_email = AsyncMock(return_value=mock_user)
 
             service = AuthService(mock_db)
-            result = await service.login(make_login_data())
+            token_response, refresh_token = await service.login(make_login_data())
 
-            assert result.access_token == "token123"
+            assert token_response.access_token == "token123"
+            assert refresh_token == "refresh123"
 
     @pytest.mark.asyncio
     async def test_login_wrong_password_raises_401(self, mock_db, mock_user):

@@ -12,6 +12,7 @@ from src.api.routes.catalog_router import router as catalog_router
 from src.api.routes.property_router import router as property_router
 from src.api.routes.favorite_router import router as favorite_router
 from src.api.routes.alert_router import router as alert_router
+from src.api.routes.profile_router import agents_router, owners_router
 from src.api.middleware import (
     LoggingMiddleware,
     RateLimitMiddleware,
@@ -96,6 +97,8 @@ def create_app() -> FastAPI:
     app.include_router(property_router)
     app.include_router(favorite_router)
     app.include_router(alert_router)
+    app.include_router(agents_router)
+    app.include_router(owners_router)
 
     @app.get("/", tags=["Estado del servidor"])
     async def root():
